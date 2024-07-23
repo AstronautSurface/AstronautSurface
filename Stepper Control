@@ -1,0 +1,103 @@
+
+
+### Prerequisites
+Python installed RPi. If not installed use:
+   ```bash
+   sudo apt update
+   sudo apt install python3 python3-rpi.gpio
+   ```
+
+Ensure you have the `RPi.GPIO` library installed:
+   ```bash
+   sudo pip3 install RPi.GPIO
+   ```
+
+### Motor Control Script
+
+```python
+import RPi.GPIO as GPIO
+import time
+
+# Define GPIO pins for Motor A and B
+motorA_pin1 = 17  # Use GPIO 17 for A Signal
+motorA_pin2 = 27  # Use GPIO 27 for Inverted A Signal
+motorB_pin1 = 22  # Use GPIO 22 for B Signal
+motorB_pin2 = 23  # Use GPIO 23 for Inverted B Signal
+
+# Define signal functions
+def setup():
+    GPIO.setmode(GPIO.BCM)  # Use BCM pin numbering
+    GPIO.setup(motorA_pin1, GPIO.OUT)
+    GPIO.setup(motorA_pin2, GPIO.OUT)
+    GPIO.setup(motorB_pin1, GPIO.OUT)
+    GPIO.setup(motorB_pin2, GPIO.OUT)
+
+def set_motor_A(state):
+    if state == 'forward':
+        GPIO.output(motorA_pin1, GPIO.HIGH)
+        GPIO.output(motorA_pin2, GPIO.LOW)
+    elif state == 'reverse':
+        GPIO.output(motorA_pin1, GPIO.LOW)
+        GPIO.output(motorA_pin2, GPIO.HIGH)
+    elif state == 'stop':
+        GPIO.output(motorA_pin1, GPIO.LOW)
+        GPIO.output(motorA_pin2, GPIO.LOW)
+    elif state == 'brake':
+        GPIO.output(motorA_pin1, GPIO.HIGH)
+        GPIO.output(motorA_pin2, GPIO.HIGH)
+
+def set_motor_B(state):
+    if state == 'forward':
+        GPIO.output(motorB_pin1, GPIO.HIGH)
+        GPIO.output(motorB_pin2, GPIO.LOW)
+    elif state == 'reverse':
+        GPIO.output(motorB_pin1, GPIO.LOW)
+        GPIO.output(motorB_pin2, GPIO.HIGH)
+    elif state == 'stop':
+        GPIO.output(motorB_pin1, GPIO.LOW)
+        GPIO.output(motorB_pin2, GPIO.LOW)
+    elif state == 'brake':
+        GPIO.output(motorB_pin1, GPIO.HIGH)
+        GPIO.output(motorB_pin2, GPIO.HIGH)
+
+try:
+    setup()
+    
+    # usage
+    print("Motors moving forward for 2 seconds...")
+    set_motor_A('forward')
+    set_motor_B('forward')
+    time.sleep(2)
+
+    print("Motors reversing for 2 seconds...")
+    set_motor_A('reverse')
+    set_motor_B('reverse')
+    time.sleep(2)
+
+    print("Stopping motors for 2 seconds...")
+    set_motor_A('stop')
+    set_motor_B('stop')
+    time.sleep(2)
+
+    print("Braking motors for 2 seconds...")
+    set_motor_A('brake')
+    set_motor_B('brake')
+    time.sleep(2)
+
+except KeyboardInterrupt:
+    pass
+finally:
+    GPIO.cleanup()  # cleanup GPIO settings
+```
+
+### Running the Script
+1. Save the above code into a file named `motor_control.py`.
+2. Run the script using:
+   ```bash
+   python3 motor_control.py
+   ```
+
+### Explanation
+- The script defines functions to control each motor's signals based on different commands (forward, reverse, stop, brake).
+- It sets up the GPIO pins in the `setup()` function and uses loops to demonstrate motor control.
+- The script cleans up GPIO settings on exit to avoid warnings or pin conflicts in future runs.
